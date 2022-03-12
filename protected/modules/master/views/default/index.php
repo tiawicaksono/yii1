@@ -10,7 +10,7 @@ $cs->registerScriptFile($path . '/js/master.js', CClientScript::POS_END);
         <div class="col-lg-12">
             <div class="box box-info">
                 <div class="box-header with-border">
-                    <h3 class="box-title">.:: Master Penguji</h3>
+                    <h3 class="box-title">.:: KATEGORI OBAT</h3>
                 </div>
                 <div class="box-body">
                     <div class="row">
@@ -21,9 +21,9 @@ $cs->registerScriptFile($path . '/js/master.js', CClientScript::POS_END);
                                 echo CHtml::hiddenField('id_penguji', '');
                                 echo CHtml::textField('nrp', '', array('class' => 'form-control text-besar', 'placeholder' => '.:: NRP'));
                                 echo CHtml::textArea('penguji', '', array('class' => 'form-control text-besar', 'placeholder' => '.:: NAMA PENGUJI'));
-				?>
-				<label>
-                                	<input id="ttd" name="ttd" type="checkbox" class="flat-red"> Tandatangan?
+                                ?>
+                                <label>
+                                    <input id="ttd" name="ttd" type="checkbox" class="flat-red"> Tandatangan?
                                 </label>
                             </div>
                             <div class="col-lg-12 no-padding">
@@ -45,7 +45,7 @@ $cs->registerScriptFile($path . '/js/master.js', CClientScript::POS_END);
         <div class="col-lg-12">
             <div class="box box-info">
                 <div class="box-header with-border">
-                    <h3 class="box-title">.:: Master User</h3>
+                    <h3 class="box-title">.:: DISTRIBUTOR</h3>
                 </div>
                 <div class="box-body">
                     <div class="row">
@@ -53,14 +53,14 @@ $cs->registerScriptFile($path . '/js/master.js', CClientScript::POS_END);
                         <div class="col-lg-4 col-md-12">
                             <div class="col-lg-12 no-padding" style="margin-bottom: 10px;">
                                 <?php
-								echo CHtml::hiddenField('id_user', '0', array('class' => 'form-control'));
+                                echo CHtml::hiddenField('id_user', '0', array('class' => 'form-control'));
                                 echo CHtml::textField('username', '', array('class' => 'form-control', 'placeholder' => '.:: USERNAME'));
                                 echo CHtml::passwordField('password', '', array('class' => 'form-control', 'placeholder' => '.:: PASSWORD'));
                                 echo CHtml::dropDownList('hak_akses', '', array(
                                     'admin' => 'Admin',
                                     'loket' => 'Loket',
                                     'penguji' => 'Penguji',
-                                        ), array('class' => 'form-control'));
+                                ), array('class' => 'form-control'));
                                 ?>
                             </div>
                             <div class="col-lg-12 no-padding">
@@ -82,31 +82,37 @@ $cs->registerScriptFile($path . '/js/master.js', CClientScript::POS_END);
     </section>
     <section class="col-lg-6 col-md-12 no-padding">
         <div class="col-lg-12">
-            <div class="box box-warning">
+            <div class="box box-info">
                 <div class="box-header with-border">
-                    <h3 class="box-title">.:: Master Nama Komersil</h3>
+                    <h3 class="box-title">.:: OBAT</h3>
                 </div>
                 <div class="box-body">
                     <div class="row">
-                        <?php echo CHtml::beginForm('', 'post', array('class' => 'form-horizontal', 'id' => 'forminputkomersil')); ?>
-                        <div class="col-lg-6 col-md-12">
+                        <?php echo CHtml::beginForm('', 'post', array('class' => 'form-horizontal', 'id' => 'forminputuser')); ?>
+                        <div class="col-lg-4 col-md-12">
                             <div class="col-lg-12 no-padding" style="margin-bottom: 10px;">
                                 <?php
-                                echo CHtml::hiddenField('id_komersil', '');
-                                echo CHtml::textArea('komersil', '', array('class' => 'form-control text-besar', 'placeholder' => '.:: INPUT NAMA KOMERSIL'));
+                                echo CHtml::hiddenField('id_user', '0', array('class' => 'form-control'));
+                                echo CHtml::textField('username', '', array('class' => 'form-control', 'placeholder' => '.:: USERNAME'));
+                                echo CHtml::passwordField('password', '', array('class' => 'form-control', 'placeholder' => '.:: PASSWORD'));
+                                echo CHtml::dropDownList('hak_akses', '', array(
+                                    'admin' => 'Admin',
+                                    'loket' => 'Loket',
+                                    'penguji' => 'Penguji',
+                                ), array('class' => 'form-control'));
                                 ?>
                             </div>
                             <div class="col-lg-12 no-padding">
                                 <div class="pull-right">
-                                    <button type="button" class="btn btn-warning" onclick="save('komersil', '<?php echo $this->createUrl('Default/SaveKomersil'); ?>', 'new')">NEW</button>
-                                    <button type="button" class="btn btn-primary" onclick="save('komersil', '<?php echo $this->createUrl('Default/SaveKomersil'); ?>', 'update')">UPDATE</button>
+                                    <button type="button" class="btn btn-warning" onclick="saveUser('<?php echo $this->createUrl('Default/SaveUser'); ?>', 'new')">NEW</button>
+                                    <button type="button" class="btn btn-primary" onclick="saveUser('<?php echo $this->createUrl('Default/SaveUser'); ?>', 'update')">UPDATE</button>
                                 </div>
                             </div>
                         </div>
                         <?php echo CHtml::endForm(); ?>
-                        <div class="col-lg-6 col-md-12">
-                            <?php echo CHtml::textField('komersil_search', '', array('class' => 'form-control text-besar', 'placeholder' => '.:: SEARCH NAMA KOMERSIL')); ?>
-                            <table id="komersilListGrid"></table>
+                        <div class="col-lg-8 col-md-12">
+                            <?php echo CHtml::textField('user_search', '', array('class' => 'form-control text-besar', 'placeholder' => '.:: SEARCH USER')); ?>
+                            <table id="userListGrid"></table>
                         </div>
                     </div>
                 </div>
@@ -115,7 +121,7 @@ $cs->registerScriptFile($path . '/js/master.js', CClientScript::POS_END);
         <div class="col-lg-12">
             <div class="box box-success">
                 <div class="box-header with-border">
-                    <h3 class="box-title">.:: Master Jenis Karoseri</h3>
+                    <h3 class="box-title">.:: DISTRIBUTOR OBAT</h3>
                 </div>
                 <div class="box-body">
                     <div class="row">
@@ -192,22 +198,48 @@ $cs->registerScriptFile($path . '/js/master.js', CClientScript::POS_END);
         pageNumber: 1,
         pageSize: 5,
         pageList: [5, 10, 20],
-        columns: [[
-                {field: 'id_user', title: '', width: 50, halign: 'center', align: 'center', formatter: formatButtonDelete},
-				{field: 'iduser', title: '', width: 50, halign: 'center', align: 'center', formatter: formatButtonEdit},
-                {field: 'user_name', title: 'Username', width: 120, halign: 'center', align: 'left', sortable: true},
-                {field: 'itemname', title: 'Hak Akses', width: 120, halign: 'center'},
-            ]],
-        onBeforeLoad: function (params) {
+        columns: [
+            [{
+                    field: 'id_user',
+                    title: '',
+                    width: 50,
+                    halign: 'center',
+                    align: 'center',
+                    formatter: formatButtonDelete
+                },
+                {
+                    field: 'iduser',
+                    title: '',
+                    width: 50,
+                    halign: 'center',
+                    align: 'center',
+                    formatter: formatButtonEdit
+                },
+                {
+                    field: 'user_name',
+                    title: 'Username',
+                    width: 120,
+                    halign: 'center',
+                    align: 'left',
+                    sortable: true
+                },
+                {
+                    field: 'itemname',
+                    title: 'Hak Akses',
+                    width: 120,
+                    halign: 'center'
+                },
+            ]
+        ],
+        onBeforeLoad: function(params) {
             params.user = $('#user_search').val();
         },
-        onLoadError: function () {
+        onLoadError: function() {
             return false;
         },
-        onLoadSuccess: function () {
-        }
+        onLoadSuccess: function() {}
     });
-    
+
     $('#pengujiListGrid').datagrid({
         url: '<?php echo $this->createUrl('default/PengujiListGrid'); ?>',
         rownumbers: true,
@@ -223,20 +255,46 @@ $cs->registerScriptFile($path . '/js/master.js', CClientScript::POS_END);
         pageNumber: 1,
         pageSize: 5,
         pageList: [5, 10, 20],
-        columns: [[
-				{field: 'id_namapenguji', title: '', width: 50, halign: 'center', align: 'center', formatter: formatButtonDelete},
-                {field: 'id_nama_penguji', title: '', width: 50, halign: 'center', align: 'center', formatter: formatButtonEdit},
-                {field: 'nrp', title: 'NRP', width: 130, halign: 'center', align: 'left'},
-                {field: 'nama_penguji', title: 'Nama', width: 200, halign: 'center', sortable: true},
-            ]],
-        onBeforeLoad: function (params) {
+        columns: [
+            [{
+                    field: 'id_namapenguji',
+                    title: '',
+                    width: 50,
+                    halign: 'center',
+                    align: 'center',
+                    formatter: formatButtonDelete
+                },
+                {
+                    field: 'id_nama_penguji',
+                    title: '',
+                    width: 50,
+                    halign: 'center',
+                    align: 'center',
+                    formatter: formatButtonEdit
+                },
+                {
+                    field: 'nrp',
+                    title: 'NRP',
+                    width: 130,
+                    halign: 'center',
+                    align: 'left'
+                },
+                {
+                    field: 'nama_penguji',
+                    title: 'Nama',
+                    width: 200,
+                    halign: 'center',
+                    sortable: true
+                },
+            ]
+        ],
+        onBeforeLoad: function(params) {
             params.penguji = $('#penguji_search').val();
         },
-        onLoadError: function () {
+        onLoadError: function() {
             return false;
         },
-        onLoadSuccess: function () {
-        }
+        onLoadSuccess: function() {}
     });
 
     $('#komersilListGrid').datagrid({
@@ -254,18 +312,30 @@ $cs->registerScriptFile($path . '/js/master.js', CClientScript::POS_END);
         pageNumber: 1,
         pageSize: 5,
         pageList: [5, 10, 20],
-        columns: [[
-                {field: 'id_komersil', title: '', width: 50, halign: 'center', align: 'center', formatter: formatButtonEdit},
-                {field: 'komersil', title: 'Nama Komersil', width: 220, sortable: false},
-            ]],
-        onBeforeLoad: function (params) {
+        columns: [
+            [{
+                    field: 'id_komersil',
+                    title: '',
+                    width: 50,
+                    halign: 'center',
+                    align: 'center',
+                    formatter: formatButtonEdit
+                },
+                {
+                    field: 'komersil',
+                    title: 'Nama Komersil',
+                    width: 220,
+                    sortable: false
+                },
+            ]
+        ],
+        onBeforeLoad: function(params) {
             params.komersil = $('#komersil_search').val();
         },
-        onLoadError: function () {
+        onLoadError: function() {
             return false;
         },
-        onLoadSuccess: function () {
-        }
+        onLoadSuccess: function() {}
     });
 
     $('#karoseriListGrid').datagrid({
@@ -283,18 +353,30 @@ $cs->registerScriptFile($path . '/js/master.js', CClientScript::POS_END);
         pageNumber: 1,
         pageSize: 5,
         pageList: [5, 10, 20],
-        columns: [[
-                {field: 'id_karoseri', title: '', width: 50, halign: 'center', align: 'center', formatter: formatButtonEdit},
-                {field: 'karoseri', title: 'Jenis Karoseri', width: 220, sortable: false},
-            ]],
-        onBeforeLoad: function (params) {
+        columns: [
+            [{
+                    field: 'id_karoseri',
+                    title: '',
+                    width: 50,
+                    halign: 'center',
+                    align: 'center',
+                    formatter: formatButtonEdit
+                },
+                {
+                    field: 'karoseri',
+                    title: 'Jenis Karoseri',
+                    width: 220,
+                    sortable: false
+                },
+            ]
+        ],
+        onBeforeLoad: function(params) {
             params.karoseri = $('#karoseri_search').val();
         },
-        onLoadError: function () {
+        onLoadError: function() {
             return false;
         },
-        onLoadSuccess: function () {
-        }
+        onLoadSuccess: function() {}
     });
 
     $('#bahanListGrid').datagrid({
@@ -312,37 +394,49 @@ $cs->registerScriptFile($path . '/js/master.js', CClientScript::POS_END);
         pageNumber: 1,
         pageSize: 5,
         pageList: [5, 10, 20],
-        columns: [[
-                {field: 'id_bahan', title: '', width: 50, halign: 'center', align: 'center', formatter: formatButtonEdit},
-                {field: 'bahan', title: 'Bahan Utama', width: 220, sortable: false},
-            ]],
-        onBeforeLoad: function (params) {
+        columns: [
+            [{
+                    field: 'id_bahan',
+                    title: '',
+                    width: 50,
+                    halign: 'center',
+                    align: 'center',
+                    formatter: formatButtonEdit
+                },
+                {
+                    field: 'bahan',
+                    title: 'Bahan Utama',
+                    width: 220,
+                    sortable: false
+                },
+            ]
+        ],
+        onBeforeLoad: function(params) {
             params.bahan = $('#bahan_search').val();
         },
-        onLoadError: function () {
+        onLoadError: function() {
             return false;
         },
-        onLoadSuccess: function () {
-        }
+        onLoadSuccess: function() {}
     });
 
     function formatButtonDelete(value) {
         var explode = value.split('|');
         var id = explode[0];
         var pilihan = explode[1];
-		var itemname = explode[2];
-		var urlAct;
-		if (pilihan == 'penguji') {
+        var itemname = explode[2];
+        var urlAct;
+        if (pilihan == 'penguji') {
             urlAct = '<?php echo $this->createUrl('default/DeletePenguji'); ?>';
-			var button = '<button type="button" class="btn btn-danger" onclick="buttonDeletePenguji(\'' + id + '\', \'' + urlAct + '\')"><span class="glyphicon glyphicon-trash"></span></button>';
+            var button = '<button type="button" class="btn btn-danger" onclick="buttonDeletePenguji(\'' + id + '\', \'' + urlAct + '\')"><span class="glyphicon glyphicon-trash"></span></button>';
         } else if (pilihan == 'user') {
             urlAct = '<?php echo $this->createUrl('default/DeleteUser'); ?>';
-			var button = '<button type="button" class="btn btn-danger" onclick="buttonDelete(\'' + id + '\', \'' + itemname + '\', \'' + urlAct + '\')"><span class="glyphicon glyphicon-trash"></span></button>';
+            var button = '<button type="button" class="btn btn-danger" onclick="buttonDelete(\'' + id + '\', \'' + itemname + '\', \'' + urlAct + '\')"><span class="glyphicon glyphicon-trash"></span></button>';
         }
-        
+
         return button;
     }
-    
+
     function formatButtonEdit(value) {
         var explode = value.split('|');
         var id = explode[0];

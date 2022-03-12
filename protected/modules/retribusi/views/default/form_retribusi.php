@@ -56,7 +56,7 @@ $cs->registerScriptFile($baseUrl . '/js/bootstrap-select.js', CClientScript::POS
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="FORM_DOKTER" class="col-xs-3 control-label">Jenis Kendaraan</label>
+                        <label for="FORM_DOKTER" class="col-xs-3 control-label">Dokter</label>
                         <div class="col-xs-9">
                             <?php
                             $type_list = CHtml::listData($dokter, 'id', 'nama');

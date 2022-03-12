@@ -1,0 +1,30 @@
+2022/03/12 08:05:19 [error] [php] Function get_magic_quotes_gpc() is deprecated (/Applications/MAMP/htdocs/yii/yii/framework/web/CHttpRequest.php:130)
+Stack trace:
+#0 /Applications/MAMP/htdocs/yii/yii/framework/base/CApplication.php(522): CWebApplication->getComponent()
+#1 /Applications/MAMP/htdocs/yii/yii/framework/web/CWebApplication.php(545): CWebApplication->getRequest()
+#2 /Applications/MAMP/htdocs/yii/yii/framework/base/CApplication.php(170): CWebApplication->init()
+#3 /Applications/MAMP/htdocs/yii/yii/framework/YiiBase.php(125): CWebApplication->__construct()
+#4 /Applications/MAMP/htdocs/yii/yii/framework/YiiBase.php(98): createApplication()
+#5 /Applications/MAMP/htdocs/yii/index.php(13): createWebApplication()
+REQUEST_URI=/yii/
+in /Applications/MAMP/htdocs/yii/index.php (13)
+2022/03/12 08:06:55 [error] [php] Function get_magic_quotes_gpc() is deprecated (/Applications/MAMP/htdocs/yii/yii/framework/web/CHttpRequest.php:130)
+Stack trace:
+#0 /Applications/MAMP/htdocs/yii/yii/framework/base/CApplication.php(522): CWebApplication->getComponent()
+#1 /Applications/MAMP/htdocs/yii/yii/framework/web/CWebApplication.php(545): CWebApplication->getRequest()
+#2 /Applications/MAMP/htdocs/yii/yii/framework/base/CApplication.php(170): CWebApplication->init()
+#3 /Applications/MAMP/htdocs/yii/yii/framework/YiiBase.php(125): CWebApplication->__construct()
+#4 /Applications/MAMP/htdocs/yii/yii/framework/YiiBase.php(98): createApplication()
+#5 /Applications/MAMP/htdocs/yii/index.php(13): createWebApplication()
+REQUEST_URI=/yii/
+in /Applications/MAMP/htdocs/yii/index.php (13)
+2022/03/12 08:07:55 [error] [php] Function get_magic_quotes_gpc() is deprecated (/Applications/MAMP/htdocs/yii/yii/framework/web/CHttpRequest.php:130)
+Stack trace:
+#0 /Applications/MAMP/htdocs/yii/yii/framework/base/CApplication.php(522): CWebApplication->getComponent()
+#1 /Applications/MAMP/htdocs/yii/yii/framework/web/CWebApplication.php(545): CWebApplication->getRequest()
+#2 /Applications/MAMP/htdocs/yii/yii/framework/base/CApplication.php(170): CWebApplication->init()
+#3 /Applications/MAMP/htdocs/yii/yii/framework/YiiBase.php(125): CWebApplication->__construct()
+#4 /Applications/MAMP/htdocs/yii/yii/framework/YiiBase.php(98): createApplication()
+#5 /Applications/MAMP/htdocs/yii/index.php(13): createWebApplication()
+REQUEST_URI=/yii/
+in /Applications/MAMP/htdocs/yii/index.php (13)

@@ -1,585 +1,670 @@
+<?php
+$baseUrl = Yii::app()->request->baseUrl;
+$baseJs = Yii::app()->appComponent->urlJs();
+$baseCss = Yii::app()->appComponent->urlCss();
+$assetsUrl = $this->module->assetsUrl;
+$cs = Yii::app()->clientScript;
+$cs->registerCssFile($assetsUrl . '/css/check_radio.css');
+$cs->registerScriptFile($assetsUrl . '/js/rekam.js', CClientScript::POS_END);
+// $cs->registerCssFile($baseCss . '/jquery.fileuploader.css');
+// $cs->registerScriptFile($baseJs . '/jquery.fileuploader.js', CClientScript::POS_END);
+// $cs->registerScriptFile($baseJs . '/jquery.fileuploader.min.js', CClientScript::POS_END);
+?>
 <style>
     .datagrid-row {
-        min-height: 40px;
-        height: 40px;
+        height: 40px !important;
     }
 
-    #button_save_lulus {
-        background: #E53935;
-        color: #fff;
+    .datagrid-cell-c1-no_kendaraan {
+        font-weight: bold !important;
+        font-size: 12pt !important;
     }
 </style>
 <div class="row">
     <div class="col-lg-12">
         <div class="box box-info">
             <div class="box-header with-border">
-                <h3 class="box-title">Cetak Print Hasil</h3>
+                <h3 class="box-title">DAFTAR PASIEN</h3>
             </div><!-- /.box-header -->
             <div class="box-body">
-                <div class="row">
-                    <div class="col-lg-12 col-md-12">
-                        <div class="col-lg-2 col-md-3">
-                            <div class="input-group">
-                                <div class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></div>
-                                <?php echo CHtml::textField('tgl_search', date('d-M-Y'), array('readonly' => 'readonly', 'class' => 'form-control')); ?>
-                            </div>
-                        </div>
-                        <div class="col-lg-2 col-md-2">
-                            <input type="text" id="text_category" class="text-besar form-control" placeholder="NO UJI / NO KENDARAAN">
-                        </div>
-                        <div class="col-lg-2 col-md-2">
-                            <select id="choose_kelulusan" class="form-control" onchange="prosesSearch()">
-                                <option value="all" selected="true">- Semua L/TL-</option>
-                                <option value="true">Lulus</option>
-                                <option value="false">Tidak Lulus</option>
-                            </select>
-                        </div>
-                        <div class="col-lg-2 col-md-2">
-                            <select id="choose_cetak" class="form-control" onchange="prosesSearch()">
-                                <option value="all">- Semua Cetak/Belum-</option>
-                                <option value="false" selected="true">Belum Cetak</option>
-                                <option value="true">Sudah Cetak</option>
-                            </select>
-                        </div>
-                        <div class="col-lg-2 col-md-2">
-                            <button type="button" class="btn btn-info" onclick="prosesSearch()">
-                                <span class="glyphicon glyphicon-refresh"></span> Refresh
-                            </button>
+                <div class="col-lg-12 col-md-12 no-padding">
+                    <div class="col-lg-2 col-md-3">
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></div>
+                            <?php echo CHtml::textField('tgl_search', date('d-M-Y'), array('readonly' => 'readonly', 'class' => 'form-control')); ?>
                         </div>
                     </div>
-                    <div class="col-lg-12 col-md-12" style="margin-top: 20px">
-                        <table id="statusProsesListGrid"></table>
+                    <div class="col-lg-3 col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <select class="btn" id="select_category">
+                                    <option value="nik_pasien" selected="selected">NIK</option>
+                                    <option value="nama_pasien">NAMA</option>
+                                </select>
+                            </span>
+                            <?php echo CHtml::textField('text_category', '', array('class' => 'form-control text-besar')); ?>
+                        </div>
+                    </div>
+                    <div class="col-lg-1 col-md-1">
+                        <button type="button" class="btn btn-info" onclick="prosesSearch()">
+                            <span class="glyphicon glyphicon-refresh"></span> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 no-padding" style="margin-top: 20px">
+                    <table id="validasiListGrid" style="max-height:300px"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="box box-danger">
+            <div class="box-header with-border">
+                <h3 class="box-title">REKAM MEDIS</h3>
+            </div><!-- /.box-header -->
+            <div class="box-body">
+                <div class="row" style="margin-bottom: 20px">
+                    <!-- <div class="col-lg-12 col-md-12">
+                        <div class="col-lg-6 col-md-6">
+                            <form id="formUpload" class="form-horizontal" name="formUpload" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="id_hasil_uji_prauji" id="id_hasil_uji_prauji" readonly="readonly" />
+                                <span id="replace_file"><input type="file" name="files" id="file"></span>
+                            </form>
+                        </div>
+                    </div> -->
+                    <div class="col-lg-8 col-md-8">
+                        <div class="col-lg-3 col-md-3">
+                            <input type="hidden" id="id_rekam_medis" class="form-control" readonly="readonly" />
+                            <input type="hidden" id="id_dokter" class="form-control" readonly="readonly" value="<?php echo Yii::app()->session['id_pegawai']; ?>" />
+                            <input type="text" id="nik_pasien" class="form-control" placeholder="NIK PASIEN" readonly="readonly" />
+                        </div>
+                        <div class="col-lg-3 col-md-3">
+                            <input type="text" id="nama_pasien" class="form-control" placeholder="NAMA PASIEN" readonly="readonly" />
+                        </div>
+                        <div class="col-lg-3 col-md-3">
+                            <button type="button" class="btn btn-primary" onclick="clickSubmit('<?php echo $this->createUrl('Proses'); ?>')">PROSES</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#tab_1" data-toggle="tab"><b>Kondisi Tubuh</b></a></li>
+                            <li><a href="#tab_2" data-toggle="tab"><b>Organ Paru-Paru</b></a></li>
+                            <li><a href="#tab_3" data-toggle="tab"><b>Organ Jantung</b></a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab_1">
+                                <table width="100%">
+                                    <tr>
+                                        <td width="20%">1. Batuk</td>
+                                        <td colspan="4" width="80%">
+                                            <label>
+                                                <input id="A1" type="checkbox" class="flat-red"> Iya
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2. Pilek</td>
+                                        <td colspan="4">
+                                            <label>
+                                                <input id="A2" type="checkbox" class="flat-red"> Iya
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>3. Tekanan Darah Tinggi</td>
+                                        <td colspan="4"><input type="text" id="A3" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>4. Tekanan Gula Darah</td>
+                                        <td colspan="4"><input type="text" id="A4" /></td>
+                                    </tr>
+                                </table>
+                            </div><!-- /.tab-pane -->
+                            <div class="tab-pane" id="tab_2">
+                                <table width="100%">
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td colspan="2" align="center" bgcolor="#CCFFFF"><b>DEKAT</b></td>
+                                        <td colspan="2" align="center" bgcolor="#66FFFF"><b>JAUH</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="20%">1. Lampu utama tidak menyala</td>
+                                        <td bgcolor="#CCFFFF" width="15%">
+                                            <label>
+                                                <input id="b1b" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td bgcolor="#CCFFFF" width="15%">
+                                            <label>
+                                                <input id="b1a" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                        <td bgcolor="#66FFFF" width="15%">
+                                            <label>
+                                                <input id="b1d" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td bgcolor="#66FFFF" width="15%">
+                                            <label>
+                                                <input id="b1c" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td colspan="2" align="center" bgcolor="#CCFFFF"><b>DEPAN</b></td>
+                                        <td colspan="2" align="center" bgcolor="#66FFFF"><b>BELAKANG</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="20%">2. Lampu posisi tidak menyala</td>
+                                        <td bgcolor="#CCFFFF" width="15%">
+                                            <label>
+                                                <input id="b2b" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td bgcolor="#CCFFFF" width="15%">
+                                            <label>
+                                                <input id="b2a" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                        <td bgcolor="#66FFFF" width="15%">
+                                            <label>
+                                                <input id="b2d" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td bgcolor="#66FFFF" width="15%">
+                                            <label>
+                                                <input id="b2c" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="20%">3. Lampu penunjuk arah tidak menyala</td>
+                                        <td bgcolor="#CCFFFF" width="15%">
+                                            <label>
+                                                <input id="b3b" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td bgcolor="#CCFFFF" width="15%">
+                                            <label>
+                                                <input id="b3a" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                        <td bgcolor="#66FFFF" width="15%">
+                                            <label>
+                                                <input id="b3d" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td bgcolor="#66FFFF" width="15%">
+                                            <label>
+                                                <input id="b3c" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>4. Lampu rem tidak menyala</td>
+                                        <td colspan="2" bgcolor="#CCFFFF">&nbsp;</td>
+                                        <td bgcolor="#66FFFF">
+                                            <label>
+                                                <input id="b4b" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td bgcolor="#66FFFF">
+                                            <label>
+                                                <input id="b4a" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>5. Lampu mundur tidak menyala</td>
+                                        <td colspan="2" bgcolor="#CCFFFF"></td>
+                                        <td bgcolor="#66FFFF">
+                                            <label>
+                                                <input id="b5b" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td bgcolor="#66FFFF">
+                                            <label>
+                                                <input id="b5a" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>6. Lampu tambahan lainnya</td>
+                                        <td bgcolor="#CCFFFF">
+                                            <label>
+                                                <input id="b6b" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td bgcolor="#CCFFFF">
+                                            <label>
+                                                <input id="b6a" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                        <td bgcolor="#66FFFF">
+                                            <label>
+                                                <input id="b6d" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td bgcolor="#66FFFF">
+                                            <label>
+                                                <input id="b6c" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>7. Lampu Nomor Kendaraan </td>
+                                        <td>
+                                            <label>
+                                                <input id="b7" type="checkbox" class="flat-red"> Tidak Menyala
+                                            </label>
+                                        </td>
+                                        <td colspan="3">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>8. Posisi / dudukan lampu utama tidak sesuai</td>
+                                        <td>
+                                            <label>
+                                                <input id="b8a" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label>
+                                                <input id="b8b" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                        <td colspan="2">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>9. Alat Pemantul Cahaya (Reflektor) Tidak Ada</td>
+                                        <td>
+                                            <label>
+                                                <input id="b9a" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label>
+                                                <input id="b9b" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                        <td colspan="2">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>10. Alat Pemantul Cahaya (Reflektor) Rusak</td>
+                                        <td>
+                                            <label>
+                                                <input id="b10a" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label>
+                                                <input id="b10b" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                        <td colspan="2">&nbsp;</td>
+                                    </tr>
+                                </table>
+                            </div><!-- /.tab-pane -->
+                            <div class="tab-pane" id="tab_3">
+                                <table width="100%">
+                                    <tr>
+                                        <td>1. Bumper</td>
+                                        <td>
+                                            <label>
+                                                <input id="c1a" type="checkbox" class="flat-red"> &gt; 50 cm
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <div class="input-group">
+                                                <input class="form-control" type="text" id="c1ain" size="8" maxlength="8" />
+                                                <div class="input-group-addon">cm</div>
+                                            </div>
+                                        </td>
+                                        <td colspan="2">
+                                            <label>
+                                                <input id="c1b" type="checkbox" class="flat-red"> Konstruksi membahayakan
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2. Kondisi bak/cabin</td>
+                                        <td>
+                                            <label>
+                                                <input id="c2" type="checkbox" class="flat-red"> keropos
+                                            </label>
+                                        </td>
+                                        <td colspan="3">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3. Jumlah tempat duduk tidak sesuai dengan STUK/SRUT</td>
+                                        <td>
+                                            <label>
+                                                <input id="c3" type="checkbox" class="flat-red"> Ya
+                                            </label>
+                                        </td>
+                                        <td colspan="2"><input class="form-control" type="text" id="c3in" size="8" maxlength="8" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>4. Kondisi bak muatan/cabin</td>
+                                        <td>
+                                            <label>
+                                                <input id="c4" type="checkbox" class="flat-red"> Rusak
+                                            </label>
+                                        </td>
+                                        <td colspan="3">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>5. Pintu - pintu</td>
+                                        <td>
+                                            <label>
+                                                <input id="c5" type="checkbox" class="flat-red"> Rusak
+                                            </label>
+                                        </td>
+                                        <td colspan="3">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>6. Tutup bak</td>
+                                        <td>
+                                            <label>
+                                                <input id="c6" type="checkbox" class="flat-red"> Tidak Ada
+                                            </label>
+                                        </td>
+                                        <td colspan="3">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>7. Kondisi kaca retak</td>
+                                        <td>
+                                            <label>
+                                                <input id="c7a" type="checkbox" class="flat-red"> Depan
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label>
+                                                <input id="c7b" type="checkbox" class="flat-red"> Belakang
+                                            </label>
+                                        </td>
+                                        <td colspan="2">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>8. Kaca samping retak</td>
+                                        <td>
+                                            <label>
+                                                <input id="c8a" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label>
+                                                <input id="c8b" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                        <td colspan="2">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>9. Tutup tangki bahan bakar</td>
+                                        <td>
+                                            <label>
+                                                <input id="c9" type="checkbox" class="flat-red"> Tidak Ada
+                                            </label>
+                                        </td>
+                                        <td colspan="3">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>10. Jenis rumah atau bak</td>
+                                        <td>
+                                            <label>
+                                                <input id="c10" type="checkbox" class="flat-red"> Tidak Sesuai STUK/SRUT
+                                            </label>
+                                        </td>
+                                        <td colspan="3">
+                                            <select size="1" class="form-control" id="jnsbody">
+                                                <option value="">Pilih Item</option>
+
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>11. Perisai kolong</td>
+                                        <td colspan="2" align="center" bgcolor="#CCFFFF"><b>RUSAK</b></td>
+                                        <td colspan="2" align="center" bgcolor="#66FFFF"><b>TIDAK ADA</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td bgcolor="#CCFFFF" width="15%">
+                                            <label>
+                                                <input id="c11b" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td bgcolor="#CCFFFF" width="15%">
+                                            <label>
+                                                <input id="c11a" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                        <td bgcolor="#66FFFF" width="15%">
+                                            <label>
+                                                <input id="c11d" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td bgcolor="#66FFFF" width="15%">
+                                            <label>
+                                                <input id="c11c" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>12. Cabin/bak diubah</td>
+                                        <td colspan="2">
+                                            <label>
+                                                <input id="c12" type="checkbox" class="flat-red"> Tidak sesuai type kendaraan
+                                            </label>
+                                        </td>
+                                        <td colspan="2">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>13. Bahan Bak</td>
+                                        <td>
+                                            <label>
+                                                <input id="c13" type="checkbox" class="flat-red"> Tidak Sesuai STUK/SRUT
+                                            </label>
+                                        </td>
+                                        <td colspan="3">
+                                            <select size="1" class="form-control ui-state-default" id="jnsbahan">
+                                                <option value="">Pilih Item</option>
+
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>14. Hidrolis dump</td>
+                                        <td>
+                                            <label>
+                                                <input id="c14" type="checkbox" class="flat-red"> Tidak Berfungsi
+                                            </label>
+                                        </td>
+                                        <td colspan="3">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>15. Kaca pintu</td>
+                                        <td>
+                                            <label>
+                                                <input id="c15a" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label>
+                                                <input id="c15b" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                        <td colspan="2">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>16. Pemasangan kaca film</td>
+                                        <td colspan="4">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>- Pemasangan kaca film lebih dari 1/3 luas</td>
+                                        <td>
+                                            <label>
+                                                <input id="c16a1" type="checkbox" class="flat-red"> Depan
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label>
+                                                <input id=c16a2" type="checkbox" class="flat-red"> Belakang
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label>
+                                                <input id="c16a3" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label>
+                                                <input id="c16a4" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>- Ketebalan lebih dari 40%</td>
+                                        <td>
+                                            <label>
+                                                <input id="c16b1" type="checkbox" class="flat-red"> Depan
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label>
+                                                <input id="c16b2" type="checkbox" class="flat-red"> Belakang
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label>
+                                                <input id="c16b3" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label>
+                                                <input id="c16b4" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>- Ketebalan lebih dari 30% untuk pemasangan penuh</td>
+                                        <td>
+                                            <label>
+                                                <input id="c16c1" type="checkbox" class="flat-red"> Depan
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label>
+                                                <input id="c16c2" type="checkbox" class="flat-red"> Belakang
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label>
+                                                <input id="c16c3" type="checkbox" class="flat-red"> Kiri
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <label>
+                                                <input id="c16c4" type="checkbox" class="flat-red"> Kanan
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>17. Kondisi body</td>
+                                        <td>
+                                            <label>
+                                                <input id="c17" type="checkbox" class="flat-red"> Keropos
+                                            </label>
+                                        </td>
+                                        <td colspan="3">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>18. Pintu - pintu</td>
+                                        <td>
+                                            <label>
+                                                <input id="c18" type="checkbox" class="flat-red"> Keropos
+                                            </label>
+                                        </td>
+                                        <td colspan="3">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>19. Kondisi Kursi</td>
+                                        <td>
+                                            <label>
+                                                <input id="c19" type="checkbox" class="flat-red"> Rusak
+                                            </label>
+                                        </td>
+                                        <td colspan="3">&nbsp;</td>
+                                    </tr>
+                                </table>
+                            </div><!-- /.tab-pane -->
+                        </div><!-- /.tab-content -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div id="dlg_no_surat" class="easyui-dialog" title="No Surat" style="width: 400px; height: auto; padding: 10px;display: none" data-options="
-     iconCls: 'icon-print',
-     autoOpen: false,
-     buttons: [{
-     text:'Print',
-     iconCls:'icon-print',
-     handler:function(){
-     cetakTidakLulus();
-     }
-     }]
-     ">
-        <div class="col-lg-12 col-md-12 col-sm-12 no-padding">
-            <div class="col-lg-12 col-md-12 col-sm-12 no-padding" style="margin-bottom: 10px;">
-                <select id="choose_penguji" class="form-control">
-                    <?php
-                    $penguji = Penguji::model()->findAll();
-                    foreach ($penguji as $dataPenguji) :
-                    ?>
-                        <option value="<?php echo $dataPenguji->nrp; ?>"><?php echo $dataPenguji->nama; ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 no-padding">
-                <?php
-                echo CHtml::hiddenField('dialog_url', '');
-                echo CHtml::hiddenField('dialog_id', '');
-                //            echo CHtml::textField('dialog_no_surat', '', array('class' => 'form-control text-besar'));
-                ?>
-            </div>
-        </div>
-    </div>
-    <div id="dlg_lulus_sementara" class="easyui-dialog" title="Lulus Sementara" style="width: 400px; height: auto; padding: 10px;display: none" data-options="
-     iconCls: 'icon-print',
-     autoOpen: false,
-     buttons: [{
-     text:'Print',
-     iconCls:'icon-print',
-     handler:function(){
-     cetakLulusSementara();
-     }
-     }]
-     ">
-        <div class="col-lg-12 col-md-12 col-sm-12 no-padding">
-            <div class="col-lg-12 col-md-12 col-sm-12 no-padding" style="margin-bottom: 10px;">
-                <select id="choose_penguji_sementara" class="form-control">
-                    <?php
-                    $penguji = TblNamaPenguji::model()->findAllByAttributes(array('status_penguji' => true));
-                    foreach ($penguji as $dataPenguji) :
-                    ?>
-                        <option value="<?php echo $dataPenguji->nrp; ?>"><?php echo $dataPenguji->nama_penguji; ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 no-padding">
-                <?php
-                echo CHtml::textArea('catatan_lulus_sementara', '', array('class' => 'form-control'));
-                echo CHtml::hiddenField('dialog_sementara_url', '');
-                echo CHtml::hiddenField('dialog_sementara_id', '');
-                ?>
-            </div>
-        </div>
-    </div>
-    <div id="dlg_cetak_hasil" class="easyui-dialog" title="Cetak Hasil Uji" style="width: 400px; height: auto; padding: 10px;display: none" data-options="
-     iconCls: 'icon-print',
-     autoOpen: false,
-     buttons: [{
-     id: 'button_save_lulus',
-     text:'Kartu',
-     iconCls:'icon-save',
-     handler:function(){
-     submitLulus();
-     }}]
-     ">
-        <div class="col-lg-12 col-md-12 col-sm-12 no-padding">
-            <div class="col-lg-12 col-md-12 col-sm-12 no-padding" style="margin-bottom: 10px;">
-                <select id="choose_lulus_penguji" class="form-control">
-                    <?php
-                    $penguji = TblNamaPenguji::model()->findAllByAttributes(array('status_penguji' => true));
-                    foreach ($penguji as $dataPenguji) :
-                    ?>
-                        <option value="<?php echo $dataPenguji->nrp; ?>">
-                            <?php echo $dataPenguji->nama_penguji; ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 no-padding">
-                <?php
-                //            echo CHtml::hiddenField('dialog_lulus_url', '');
-                echo CHtml::hiddenField('dialog_lulus_id', '');
-                ?>
-                <select id="choose_posisi" class="form-control">
-                    <option value="kiri">Kiri</option>
-                    <option value="kanan">Kanan</option>
-                </select>
-            </div>
-        </div>
-    </div>
-    <div id="dlg_cetak_tl_dimensi" class="easyui-dialog" title="Cetak TL Dimensi" style="width: 400px; height: auto; padding: 10px;display: none" data-options="
-     iconCls: 'icon-print',
-     autoOpen: false,
-     modal: true,
-     buttons: [{
-     text:'Print',
-     iconCls:'icon-print',
-     handler:function(){
-     cetakTlDimensi();
-     }
-     }]
-     ">
-        <div class="col-lg-12 col-md-12 col-sm-12 no-padding">
-            <div class="col-lg-12 col-md-12 col-sm-12 no-padding" style="margin-bottom: 10px;">
-                <?php
-                echo CHtml::hiddenField('dialog_tl_dimensi_id', '');
-                ?>
-                <select id="choose_tl_penguji" class="form-control">
-                    <?php
-                    $penguji = TblNamaPenguji::model()->findAllByAttributes(array('status_penguji' => true));
-                    foreach ($penguji as $dataPenguji) :
-                    ?>
-                        <option value="<?php echo $dataPenguji->nrp; ?>"><?php echo $dataPenguji->nama_penguji; ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-        </div>
-    </div>
-    <script>
-        $('#statusProsesListGrid').datagrid({
-            url: '<?php echo $this->createUrl('Printhasil/PrintHasilListGrid'); ?>',
-            width: '100%',
-            pagination: true,
-            singleSelect: true,
-            selectOnCheck: false,
-            checkOnSelect: true,
-            collapsible: true,
-            rownumbers: true,
-            striped: true,
-            loadMsg: 'Loading...',
-            method: 'POST',
-            nowrap: false,
-            pageNumber: 1,
-            pageSize: 15,
-            pageList: [15, 30, 50],
-            columns: [
-                [
-                    <?php if (Yii::app()->user->isRole('Admin')) { ?> {
-                            field: 'hasil_uji_id',
-                            title: 'Prauji',
-                            width: 50,
-                            halign: 'center',
-                            align: 'center',
-                            formatter: bandingPraujiButton
-                        },
-                        {
-                            field: 'id_hasil_uji',
-                            title: 'Pengukuran',
-                            width: 80,
-                            halign: 'center',
-                            align: 'center',
-                            formatter: bandingPengukuranButton
-                        },
-                    <?php } ?> {
-                        field: 'cetak',
-                        width: 80,
-                        title: 'CETAK',
-                        sortable: false,
-                        halign: 'center',
-                        align: 'center',
-                        formatter: buttonCetak
-                    },
-                    {
-                        field: 'no_kendaraan',
-                        width: 90,
-                        title: 'No Kendaraan',
-                        sortable: false
-                    },
-                    {
-                        field: 'no_uji',
-                        title: 'No Uji',
-                        width: 100,
-                        sortable: false
-                    },
-                    {
-                        field: 'nama_pemilik',
-                        title: 'Nama Pemilik',
-                        width: 150,
-                        sortable: false
-                    },
-                    {
-                        field: 'jenis_kendaraan',
-                        title: 'Jenis Kendaraan',
-                        width: 200,
-                        sortable: false
-                    },
-                    {
-                        field: 'kartu_uji',
-                        title: 'Kartu Uji',
-                        width: 80,
-                        sortable: false
-                    },
-                    {
-                        field: 'prauji',
-                        width: 50,
-                        title: 'Pra Uji',
-                        sortable: false,
-                        halign: 'center',
-                        align: 'center'
-                    },
-                    {
-                        field: 'emisi',
-                        width: 50,
-                        title: 'Emisi',
-                        sortable: false,
-                        halign: 'center',
-                        align: 'center'
-                    },
-                    {
-                        field: 'pitlift',
-                        width: 50,
-                        title: 'Pit Lift',
-                        sortable: false,
-                        halign: 'center',
-                        align: 'center'
-                    },
-                    {
-                        field: 'lampu',
-                        width: 50,
-                        title: 'Lampu',
-                        sortable: false,
-                        halign: 'center',
-                        align: 'center'
-                    },
-                    {
-                        field: 'rem',
-                        width: 50,
-                        title: 'Brake',
-                        sortable: false,
-                        halign: 'center',
-                        align: 'center'
-                    },
-                    {
-                        field: 'nm_penguji',
-                        width: 150,
-                        title: 'Penguji',
-                        sortable: false,
-                        halign: 'center'
-                    },
-                    {
-                        field: 'catatan',
-                        width: 250,
-                        title: 'Catatan',
-                        sortable: false,
-                        halign: 'center'
-                    }
-                ]
-            ],
-            onBeforeLoad: function(params) {
-                params.tanggal = $('#tgl_search').val();
-                params.chooseKelulusan = $('#choose_kelulusan :selected').val();
-                params.chooseCetak = $('#choose_cetak :selected').val();
-                params.textCategory = $('#text_category').val();
-            },
-            onLoadError: function() {
-                return false;
-            },
-            onLoadSuccess: function() {}
-        });
+</div>
 
-        $(document).ready(function() {
-            $('#dlg_no_surat').dialog('close');
-            $('#dlg_cetak_hasil').dialog('close');
-            $('#dlg_cetak_tl_dimensi').dialog('close');
-            $('#dlg_lulus_sementara').dialog('close');
-            $('#tgl_search').datepicker({
-                endDate: "today",
-                format: 'dd-M-yyyy',
-                daysOfWeekDisabled: [0, 6],
-                autoclose: true,
-            }).on('changeDate', prosesSearch);
-        });
-
-        $(document).on("keypress", '#text_category', function(e) {
-            var code = e.keyCode || e.which;
-            if (code == 13) {
-                prosesSearch();
-                return false;
-            }
-        });
-
-        $("#dlg_cetak_hasil").keydown(function(event) {
-            if (event.keyCode == 13) {
-                $(this).parent()
-                    .find("#button_print_lulus").trigger("click");
-                return false;
-            }
-        });
-
-        function bandingPraujiButton(value) {
-            var button;
-            var urlact = '<?php echo $this->createUrl('Printhasil/ProsesBandingPrauji'); ?>';
-            button = '<button type="button" data-toggle="tooltip" title="Banding" class="btn btn-danger" onclick="buttonBanding(' + value + ', \'' + urlact + '\')"><span class="glyphicon glyphicon-random"></span></button>';
-            return button;
-        }
-
-        function bandingPengukuranButton(value) {
-            var button;
-            var urlact = '<?php echo $this->createUrl('Printhasil/ProsesBandingPengukuran'); ?>';
-            button = '<button type="button" data-toggle="tooltip" title="Banding" class="btn btn-danger" onclick="buttonBanding(' + value + ', \'' + urlact + '\')"><span class="glyphicon glyphicon-random"></span></button>';
-            return button;
-        }
-
-        function prosesSearch() {
-            $('#statusProsesListGrid').datagrid('reload');
-        }
-
-        function buttonBanding(value, urlAct) {
-            $.messager.confirm('Confirm', 'Apakah anda yakin ingin banding?', function(r) {
-                if (r) {
-                    $.ajax({
-                        type: 'POST',
-                        url: urlAct,
-                        data: {
-                            id_hasil_uji: value
-                        },
-                        beforeSend: function() {
-                            showlargeloader();
-                        },
-                        success: function(data) {
-                            $('#statusProsesListGrid').datagrid('reload');
-                            hidelargeloader();
-                        },
-                        error: function() {
-                            $('#statusProsesListGrid').datagrid('reload');
-                            hidelargeloader();
-                            return false;
-                        }
-                    });
+<script>
+    $('#validasiListGrid').datagrid({
+        url: '<?php echo $this->createUrl('Default/ListPendaftaran'); ?>',
+        width: '100%',
+        //        view: scrollview,
+        rownumbers: true,
+        singleSelect: true,
+        pagination: true,
+        selectOnCheck: false,
+        checkOnSelect: true,
+        collapsible: true,
+        striped: true,
+        loadMsg: 'Loading...',
+        method: 'POST',
+        nowrap: false,
+        pageNumber: 1,
+        pageSize: 200,
+        pageList: [50, 100, 200],
+        columns: [
+            [{
+                    field: 'id_rekam_medis',
+                    hidden: true
+                },
+                {
+                    field: 'nik_pasien',
+                    width: 120,
+                    title: 'NIK PASIEN',
+                    sortable: false
+                },
+                {
+                    field: 'nama_pasien',
+                    width: 120,
+                    title: 'NAMA PASIEN',
+                    sortable: false
+                },
+                {
+                    field: 'alamat_pasien',
+                    title: 'ALAMAT PASIEN',
+                    width: 200,
+                    sortable: false
                 }
-            });
-        }
-
-        function buttonCetak(value) {
-            var button;
-            var explode = value.split('|');
-            var ltl = explode[0];
-            var id = explode[1];
-            var noSurat = explode[2];
-            var url = '';
-            if (ltl == 'l') {
-                url = '<?php echo $this->createUrl('Printhasil/CetakLulus'); ?>';
-                button = '<button class="btn btn-success" type="button" onclick="buttonDialogPosisi(\'' + id + '\')"><span class="glyphicon glyphicon-duplicate"></span></button>';
-            } else if (ltl == 'tl') {
-                url = '<?php echo $this->createUrl('Printhasil/CetakTidakLulus'); ?>';
-                button = '<button class="btn btn-danger" type="button" onclick="buttonDialogNoSurat(\'' + url + '\', \'' + id + '\', \'' + noSurat + '\')"><span class="glyphicon glyphicon-duplicate"></span></button>';
-            } else {
-                button = "<button class='btn btn-default' type='button' disabled='disabled'><span class='glyphicon glyphicon-duplicate'></span></button>";
-            }
-            return button;
-        }
-
-        // PROSES CETAK LULUS SEMENTARA
-        function buttonCetakSementara(value) {
-            var button;
-            var explode = value.split('|');
-            var ltl = explode[0];
-            var id = explode[1];
-            var url = '';
-            if (ltl == 'l') {
-                url = '<?php echo $this->createUrl('Printhasil/CetakLulusSementara'); ?>';
-                button = '<button class="btn btn-success" type="button" onclick="buttonDialogNoSuratSementara(\'' + url + '\', \'' + id + '\')"><span class="glyphicon glyphicon-duplicate"></span></button>';
-            } else {
-                button = "<button class='btn btn-default' type='button' disabled='disabled'><span class='glyphicon glyphicon-duplicate'></span></button>";
-            }
-            return button;
-        }
-
-        function buttonDialogNoSuratSementara(urlAct, id) {
-            $('#dialog_sementara_id').val(id);
-            $('#dialog_sementara_url').val(urlAct);
-            $('#dlg_lulus_sementara').dialog('open');
-        }
-
-        function cetakLulusSementara() {
-            var no_surat = '';
-            var penguji = $("#choose_penguji_sementara option:selected").val();
-            var catatan = $('#catatan_lulus_sementara').val();
-            var id = $('#dialog_sementara_id').val();
-            var url = $('#dialog_sementara_url').val();
-            $.ajax({
-                url: '<?php echo $this->createUrl('Printhasil/SaveCetakLulusSementara'); ?>',
-                type: 'POST',
-                data: {
-                    no_surat: no_surat,
-                    penguji: penguji,
-                    id: id,
-                    catatan: catatan
-                },
-                success: function(data) {
-                    $('#dlg_lulus_sementara').dialog('close');
-                    prosesSearch();
-                    prosesCetakLulusSementara(url, id, no_surat, penguji);
-                },
-                error: function(data) {
-                    $('#dlg_lulus_sementara').dialog('close');
-                    prosesSearch();
-                    return false;
-                }
-            });
-        }
-
-        function prosesCetakLulusSementara(url, id, no_surat, penguji) {
-            var win = window.open(url + "?id=" + id + "&nosurat=" + no_surat + "&nrp=" + penguji, '_blank');
-            win.focus();
-        }
-
-        // PROSES CETAK LULUS
-        function buttonDialogPosisi(id) {
-            $('#dialog_lulus_id').val(id);
-            //        $('#dialog_lulus_url').val(urlAct);
-            $('#dlg_cetak_hasil').dialog({
-                open: function() {
-                    $(document).on("keypress", '#button_print_lulus', function(e) {
-                        var code = e.keyCode || e.which;
-                        if (code == 13) {
-                            cetakLulus();
-                            return false;
-                        }
-                    });
-                }
-            });
-            $('#dlg_cetak_hasil').dialog('center');
-        }
-
-        function submitLulus() {
-            var no_seri_kartu = $("#no_seri_kartu").val();
-            var posisi = $("#choose_posisi option:selected").val();
-            var penguji = $("#choose_lulus_penguji option:selected").val();
-            var id = $('#dialog_lulus_id').val();
-            var url = $('#dialog_lulus_url').val();
-            $.ajax({
-                url: '<?php echo $this->createUrl('Printhasil/SaveCetakLulus'); ?>',
-                type: 'POST',
-                data: {
-                    posisi: posisi,
-                    penguji: penguji,
-                    id: id,
-                    no_seri_kartu: no_seri_kartu
-                },
-                success: function(data) {
-                    $('#dlg_cetak_hasil').dialog('close');
-                    prosesSearch();
-                },
-                error: function(data) {
-                    $('#dlg_cetak_hasil').dialog('close');
-                    prosesSearch();
-                    return false;
-                }
-            });
-        }
-
-        function cetakLulus() {
-            var posisi = $("#choose_posisi option:selected").val();
-            var penguji = $("#choose_lulus_penguji option:selected").val();
-            var id = $('#dialog_lulus_id').val();
-            var urlAct = '<?php echo $this->createUrl('Printhasil/SaveCetakLulus'); ?>';
-            $.ajax({
-                url: urlAct,
-                type: 'POST',
-                data: {
-                    posisi: posisi,
-                    penguji: penguji,
-                    id: id
-                },
-                success: function(data) {
-                    $('#dlg_cetak_hasil').dialog('close');
-                    prosesSearch();
-                    prosesCetakLulus(urlAct, id, posisi, penguji);
-                },
-                error: function(data) {
-                    $('#dlg_cetak_hasil').dialog('close');
-                    prosesSearch();
-                    return false;
-                }
-            });
-        }
-
-        function prosesCetakLulus(urlAct, id, posisi, penguji) {
-            var win = window.open(urlAct + "?id=" + id + "&posisi=" + posisi + "&nrp=" + penguji, '_blank');
-            win.focus();
-        }
-
-        // PROSES CETAK TIDAK LULUS
-        function buttonDialogNoSurat(urlAct, id, noSurat) {
-            $('#dialog_id').val(id);
-            $('#dialog_url').val(urlAct);
-            $('#dialog_no_surat').val(noSurat);
-            $('#dlg_no_surat').dialog('open');
-        }
-
-        function cetakTidakLulus() {
-            var no_surat = '';
-            var penguji = $("#choose_penguji option:selected").val();
-            var id = $('#dialog_id').val();
-            var url = $('#dialog_url').val();
-            $.ajax({
-                url: '<?php echo $this->createUrl('Printhasil/SaveCetakTidakLulus'); ?>',
-                type: 'POST',
-                data: {
-                    penguji: penguji,
-                    id: id
-                },
-                success: function(data) {
-                    $('#dlg_no_surat').dialog('close');
-                    prosesSearch();
-                    prosesCetakTidakLulus(url, id, no_surat, penguji);
-                },
-                error: function(data) {
-                    $('#dlg_no_surat').dialog('close');
-                    prosesSearch();
-                    return false;
-                }
-            });
-        }
-
-        function prosesCetakTidakLulus(url, id, no_surat, penguji) {
-            var win = window.open(url + "?id=" + id + "&nosurat=" + no_surat + "&nrp=" + penguji, '_blank');
-            win.focus();
-        }
-    </script>
+            ]
+        ],
+        onBeforeLoad: function(params) {
+            params.textCategory = $('#text_category').val();
+            params.selectCategory = $('#select_category :selected').val();
+            params.selectDate = $('#tgl_search').val();
+        },
+        onClickRow: function() {
+            getInformationPasien();
+        },
+        onLoadError: function() {
+            return false;
+        },
+        onLoadSuccess: function() {}
+    });
+</script>

@@ -7,7 +7,7 @@
 return array(
     'timeZone' => 'Asia/Jakarta',
     'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
-    'name' => 'PKB SAMPANG',
+    'name' => 'INOVA MEDIKA',
     // preloading 'log' component
     'preload' => array('log'),
     // autoloading model and component classes
@@ -22,18 +22,12 @@ return array(
     ),
     'theme' => 'adminlte',
     'modules' => array(
-        'android',
-        'capture',
-        'recommendation',
         'report',
         'loket',
         'retribusi',
-        'ikm',
-        'pengujian',
-        'pengukuran',
+        'employee',
+        'rekam',
         'display',
-        'cis',
-        'va',
         'master',
         // uncomment the following to enable the Gii tool
         'gii' => array(

@@ -2,15 +2,17 @@
 
 Yii::import('zii.widgets.CPortlet');
 
-class MainMenuEdit extends CPortlet {
+class MainMenuEdit extends CPortlet
+{
 
-    public function init() {
+    public function init()
+    {
         parent::init();
     }
 
-    protected function renderContent() {
-        $menu = TblMenu::model()->getMenu();
+    protected function renderContent()
+    {
+        $menu = MMenu::model()->getMenu();
         $this->render('mainMenuEdit', array('menu' => $menu));
     }
-
 }

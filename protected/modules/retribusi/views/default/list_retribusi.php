@@ -121,15 +121,15 @@
                     width: 50,
                     halign: 'center',
                     align: 'center',
-                    formatter: formatAction
+                    formatter: buttonEdit
                 },
                 {
                     field: 'delete',
-                    title: 'Delete',
+                    title: 'DELETE',
                     width: 50,
                     halign: 'center',
                     align: 'center',
-                    formatter: formatDelete
+                    formatter: buttonDelete
                 },
                 //                {field: 'numerator', title: 'NUMERATOR', width: 100, sortable: true},
                 {
@@ -182,12 +182,12 @@
         onLoadSuccess: function() {}
     });
 
-    function formatAction(value) {
+    function buttonEdit(value) {
         var button = '<button type="button" class="btn btn-info edit-retribusi" onclick="buttonEditTerdaftar(\'' + value + '\')"><span class="glyphicon glyphicon-pencil"></span></button>';
         return button;
     }
 
-    function formatDelete(value) {
+    function buttonDelete(value) {
         var button = '<button type="button" class="btn btn-danger delete-retribusi" onclick="buttonDeleteTerdaftar(\'' + value + '\')"><span class="glyphicon glyphicon-trash"></span></button>';
         return button;
     }
@@ -197,58 +197,14 @@
         return button;
     }
 
-    //    function prosesChangeValidasi() {
-    //        var chooseValidasi = $('#choose_validasi :selected').val();
-    //        if(chooseValidasi == 'true'){
-    //            
-    //        }else{
-    //            
-    //        }
-    //    }
-
     function cetakKwitansi(id) {
         var url = '<?php echo $this->createUrl('Default/CetakRetribusi'); ?>';
         var win = window.open(url + "?id=" + id, '_blank');
         win.focus();
     }
 
-
-    function buttonEditTerdaftar(value) {
-        $('#pilih_kategori').val('0');
-        $('#div_update_tgl_kontrol').hide();
-        $('#update_dokter').hide();
-        $('#dlg_update_pendaftaran').val(value);
-        $('#dlg').dialog('open');
-        $('#dlg').dialog('center');
-    }
-
-    function closeDialog() {
-        $('#dlg').dialog('close');
-    }
-
     function prosesSearch() {
         $('#validasiListGrid').datagrid('reload');
-    }
-
-    function saveEditRetribusi() {
-        var data = $("#form_edit").serialize();
-        $.ajax({
-            type: 'POST',
-            url: '<?php echo $this->createUrl('Default/UpdateRetribusi'); ?>',
-            data: data,
-            beforeSend: function() {
-                showlargeloader();
-            },
-            success: function(data) {
-                hidelargeloader();
-                closeDialog();
-                prosesSearch();
-            },
-            error: function() {
-                hidelargeloader();
-                return false;
-            }
-        });
     }
 
     $(document).on("keypress", '#text_category', function(e) {
@@ -260,7 +216,6 @@
     });
 
     $(document).ready(function() {
-        closeDialog();
         $('#tgl_search').datepicker({
             format: 'dd-M-yyyy',
             daysOfWeekDisabled: [0, 7],
@@ -273,24 +228,4 @@
             autoclose: true,
         });
     });
-
-    function buttonDeleteTerdaftar(value) {
-        $.messager.confirm('Delete Retribusi', 'Apakah anda yakin ingin delete?', function(r) {
-            if (r) {
-                $.ajax({
-                    type: 'POST',
-                    url: '<?php echo $this->createUrl('Default/DeletePendaftaran'); ?>',
-                    data: {
-                        id: value
-                    },
-                    success: function(data) {
-                        $('#validasiListGrid').datagrid('reload');
-                    },
-                    error: function() {
-                        return false;
-                    }
-                });
-            }
-        });
-    }
 </script>

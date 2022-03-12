@@ -1,4 +1,5 @@
 $(document).ready(function () {
+  closeDialog();
   $("#FORM_TGL_KONTROL").datepicker({
     startDate: "today",
     format: "dd/mm/yyyy",
@@ -7,6 +8,10 @@ $(document).ready(function () {
   });
   $("#FORM_NIK").focus();
 });
+
+function closeDialog() {
+  $("#dlg").dialog("close");
+}
 
 //====REKOM dan PENDAFTARAN====
 function prosesSearchDetailSb(urlAct, pilihan) {
@@ -65,6 +70,71 @@ function pilihKategori(urlAct) {
     }
   }
 }
+
+function buttonEditTerdaftar(value) {
+  $("#pilih_kategori").val("0");
+  $("#div_update_tgl_kontrol").hide();
+  $("#update_dokter").hide();
+  $("#dlg_update_pendaftaran").val(value);
+  $("#dlg").dialog("open");
+  $("#dlg").dialog("center");
+}
+
+function saveEditRetribusi() {
+  var origin = window.location.origin;
+  var data = $("#form_edit").serialize();
+  $.ajax({
+    type: "POST",
+    url: origin + "/inova/retribusi/Default/UpdateRetribusi",
+    data: data,
+    beforeSend: function () {
+      showlargeloader();
+    },
+    success: function (data) {
+      hidelargeloader();
+      closeDialog();
+      prosesSearch();
+    },
+    error: function () {
+      hidelargeloader();
+      return false;
+    },
+  });
+}
+
+function buttonDelete(value) {
+  var button =
+    '<button type="button" class="btn btn-danger delete-retribusi" onclick="buttonDeleteTerdaftar(\'' +
+    value +
+    '\')"><span class="glyphicon glyphicon-trash"></span></button>';
+  return button;
+}
+
+function buttonDeleteTerdaftar(value) {
+  var origin = window.location.origin;
+  $.messager.confirm(
+    "Delete Retribusi",
+    "Apakah anda yakin ingin delete?",
+    function (r) {
+      if (r) {
+        $.ajax({
+          type: "POST",
+          url: origin + "/inova/retribusi/Default/DeletePendaftaran",
+          data: {
+            id: value,
+          },
+          success: function (data) {
+            $("#validasiListGrid").datagrid("reload");
+          },
+          error: function () {
+            return false;
+          },
+        });
+      }
+    }
+  );
+}
+
 function submitForm(urlAct, idForm) {
   var no_sb = $("#FORM_ID_KENDARAAN").val();
   var jenis_uji = $("#FORM_JENIS_PENGUJIAN").val();

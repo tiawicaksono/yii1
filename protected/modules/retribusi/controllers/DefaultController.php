@@ -119,6 +119,7 @@ class DefaultController extends Controller
         $selectCategory = $_POST['selectCategory'];
         $textCategory = strtoupper($_POST['textCategory']);
         $selectDate = strtoupper($_POST['selectDate']);
+        $validasi = isset($_POST['chooseValidasi']) ? $_POST['chooseValidasi'] : '';
         $page = isset($_POST['page']) ? intval($_POST['page']) : 1;
         $rows = isset($_POST['rows']) ? intval($_POST['rows']) : 10;
         $sort = isset($_POST['sort']) ? strval($_POST['sort']) : 'id_rekam_medis';
@@ -130,7 +131,10 @@ class DefaultController extends Controller
         $criteria->limit = $rows;
         $criteria->offset = $offset;
         if (!empty($textCategory)) {
-            $criteria->addCondition("( (replace(LOWER($selectCategory),' ','') like replace(LOWER('%" . $textCategory . "%'),' ',''))");
+            $criteria->addCondition("(replace(LOWER($selectCategory),' ','') like replace(LOWER('%" . $textCategory . "%'),' ',''))");
+        }
+        if (!empty($validasi)) {
+            $criteria->addCondition("status_pembayaran = $validasi");
         }
         $criteria->addCondition("tanggal_rekam_medis = TO_DATE('" . $selectDate . "', 'DD-Mon-YY')");
         $result = VPembayaran::model()->findAll($criteria);
@@ -143,12 +147,14 @@ class DefaultController extends Controller
                 "id_rekam_medis" => $p->id_rekam_medis,
                 "delete" => $p->id_rekam_medis,
                 "update" => $p->id_rekam_medis,
+                "id_checkbox" => $p->id_rekam_medis,
                 "no_kuitansi" => $p->no_kuitansi,
                 "nik_pasien" => $p->nik_pasien,
                 "nama_pasien" => $p->nama_pasien,
                 "nama_dokter" => $p->nama_dokter,
                 "tanggal_rekam_medis" => $tgl_kontrol,
-                "nama_petugas_pendaftaran" => $p->nama_petugas_pendaftaran
+                "nama_petugas_pendaftaran" => $p->nama_petugas_pendaftaran,
+                "total_biaya" => "<b>" . number_format($p->biaya_dokter + $p->jumlah_harga_obat, 0, ',', '.') . "</b>"
             );
         }
         header('Content-Type: application/json');

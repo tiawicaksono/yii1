@@ -17,13 +17,7 @@ class DefaultController extends Controller
     public function actionIndex()
     {
         $this->pageTitle = 'RETRIBUSI';
-        $tbl_uji = TblUji::model()->getUjiReribusi();
-        //==============================================
-        $tbl_jns_kend = TblJnsKend::model()->findAll();
-        $this->render('form_retribusi', array(
-            'tbl_uji' => $tbl_uji,
-            'tbl_jns_kend' => $tbl_jns_kend
-        ));
+        echo "asd";
     }
 
     public function actionDetailNoSb()

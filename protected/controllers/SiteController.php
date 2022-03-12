@@ -37,6 +37,8 @@ class SiteController extends Controller
         $this->pageTitle = 'WELCOME';
         if (Yii::app()->user->isGuest) {
             $this->actionLogin();
+        } else {
+            $this->redirect(array('/retribusi'));
         }
     }
 
@@ -59,8 +61,8 @@ class SiteController extends Controller
             $model->attributes = $_POST['LoginForm'];
             // validate user input and redirect to the previous page if valid
             if ($model->validate() && $model->login())
-                // $this->redirect(Yii::app()->user->returnUrl);
-                $this->redirect(Yii::app()->homeUrl . 'pkb');
+                $this->redirect(Yii::app()->user->returnUrl);
+            // $this->redirect(Yii::app()->homeUrl . 'pkb');
         }
         // display the login form
         $this->render('main_login', array('model' => $model));
@@ -72,7 +74,7 @@ class SiteController extends Controller
     public function actionLogout()
     {
         Yii::app()->user->logout();
-        $this->redirect(Yii::app()->homeUrl . 'pkb');
+        $this->redirect(Yii::app()->user->returnUrl);
     }
 
     /**

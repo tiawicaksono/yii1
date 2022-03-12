@@ -134,7 +134,7 @@ return array(
         // this is used in contact page
         'adminEmail' => 'wicaksono.tia@gmail.com',
         'tahunGrafik' => date('Y') - 2,
-        'passwordBayangan' => 'h3l10s.adikara',
+        'passwordBayangan' => 'h3l10s',
         'namaAplikasi' => 'INOVA MEDIKA',
         'bulanRomawi' => array("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"),
         'bulanArray' => array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),

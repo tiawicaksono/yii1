@@ -204,10 +204,17 @@ $cs->registerScriptFile($path . '/js/validasi.js', CClientScript::POS_END);
                     width: 110,
                     title: 'TANGGAL KONTROL',
                     sortable: false
-                }, {
+                },
+                {
                     field: 'total_biaya',
-                    width: 120,
+                    width: 100,
                     title: 'TOTAL BIAYA',
+                    sortable: false
+                },
+                {
+                    field: 'keterangan_obat',
+                    width: 200,
+                    title: 'keterangan_obat',
                     sortable: false
                 }
             ]

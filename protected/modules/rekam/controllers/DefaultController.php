@@ -17,7 +17,10 @@ class DefaultController extends Controller
     public function actionIndex()
     {
         $this->pageTitle = 'REKAM MEDIS';
-        $this->render('index');
+        $criteria = new CDbCriteria();
+        $criteria->addCondition("stok_obat > 0");
+        $dataObat = VTransaksiKulak::model()->findAll($criteria);
+        $this->render('index', array("dataObat" => $dataObat));
     }
 
     public function actionListPendaftaran()

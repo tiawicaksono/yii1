@@ -154,7 +154,8 @@ class DefaultController extends Controller
                 "nama_dokter" => $p->nama_dokter,
                 "tanggal_rekam_medis" => $tgl_kontrol,
                 "nama_petugas_pendaftaran" => $p->nama_petugas_pendaftaran,
-                "total_biaya" => "<b>" . number_format($p->biaya_dokter + $p->jumlah_harga_obat, 0, ',', '.') . "</b>"
+                "total_biaya" => "<b>" . number_format($p->biaya_dokter + $p->jumlah_harga_obat, 0, ',', '.') . "</b>",
+                "keterangan_obat" => $this->catatan($p->id_rekam_medis)
             );
         }
         header('Content-Type: application/json');
@@ -165,6 +166,17 @@ class DefaultController extends Controller
             )
         );
         Yii::app()->end();
+    }
+
+    private function catatan($id_rekam_medis)
+    {
+        $data = VResepObat::model()->findAllByAttributes(array('id_rekam_medis' => $id_rekam_medis));
+        $ul = "<ul>";
+        foreach ($data as $p) {
+            $ul .= "<li>" . $p->nama_obat . " (" . $p->cara_pemakaian . ")" . "</li>";
+        }
+        $ul .= "</ul>";
+        return $ul;
     }
 
     public function actionDeletePendaftaran()

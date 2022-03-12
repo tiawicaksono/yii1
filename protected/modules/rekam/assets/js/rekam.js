@@ -1,4 +1,6 @@
 $(document).ready(function () {
+  $(".alwaysInteger").numeric({ decimal: false, negative: false });
+  $("#A4").numeric({ decimal: false, negative: false });
   $("#tgl_search")
     .datepicker({
       endDate: "today",
@@ -36,27 +38,35 @@ function clickSubmit(urlAct) {
   var kirim = "";
   var aktifitas = "";
   var inken = new Array();
+  var obatObatan = new Array();
   var id_rekam_medis = $("#id_rekam_medis").val();
   var id_dokter = $("#id_dokter").val();
   // alert($("#jnsbody").val());
   if (id_rekam_medis != "") {
-    // A. IDENTITAS KENDARAAN
+    // DATA TUBUH
     if ($("#A1").is(":checked")) {
       kode[1] = "A1";
     }
     if ($("#A2").is(":checked")) {
       kode[2] = "A2";
     }
-    //----------------------------------------------------
+
     inken[1] = "A3" + "~" + $("#A3").val();
     inken[2] = "A4" + "~" + $("#A4").val();
+    //----------------------------------------------------
+    // DATA OBAT
+    $(".rowObat")
+      .find(".valueObat")
+      .each(function () {
+        obatObatan.push($(this).prop("id") + "~" + $(this).val());
+      });
     // String yang harus dikirim sebagai variabel inputan
     for (i = 1; i < kode.length; i++) {
       if (kode[i] != null) {
         kirim = kirim + kode[i] + ",";
       }
     }
-    kirim = kirim + "#" + inken;
+    kirim = kirim + "#" + inken + "#" + obatObatan;
     $.messager.defaults.ok = "Ya";
     $.messager.defaults.cancel = "Tidak";
     $.messager.confirm(
@@ -69,7 +79,7 @@ function clickSubmit(urlAct) {
       }
     );
   } else {
-    alert("Data Kendaraan Belum Dipilih !");
+    alert("Pasien Belum Dipilih !");
   }
 }
 
@@ -92,6 +102,7 @@ function prosesSubmit(urlAct, id_rekam_medis, kirim, id_dokter) {
       //----------------------------------------------------
       $("#A3").val("");
       $("#A4").val("");
+      $(".valueObat").val("");
       prosesSearch();
     },
     error: function () {

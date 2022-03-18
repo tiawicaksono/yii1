@@ -44,12 +44,6 @@ function clickSubmit(urlAct) {
   // alert($("#jnsbody").val());
   if (id_rekam_medis != "") {
     // DATA TUBUH
-    if ($("#A1").is(":checked")) {
-      kode[1] = "A1";
-    }
-    if ($("#A2").is(":checked")) {
-      kode[2] = "A2";
-    }
     $(".rowCheckOrText")
       .find(".class_checkbox")
       .each(function () {
@@ -57,15 +51,11 @@ function clickSubmit(urlAct) {
           kode.push($(this).prop("id") + ",");
         }
       });
-
     $(".rowCheckOrText")
       .find(".class_text")
       .each(function () {
         inken.push($(this).prop("id") + "~" + $(this).val());
       });
-
-    // inken[1] = "A3" + "~" + $("#A3").val();
-    // inken[2] = "A4" + "~" + $("#A4").val();
     //----------------------------------------------------
     // DATA OBAT
     $(".rowObat")
@@ -73,12 +63,6 @@ function clickSubmit(urlAct) {
       .each(function () {
         obatObatan.push($(this).prop("id") + "~" + $(this).val());
       });
-    // String yang harus dikirim sebagai variabel inputan
-    // for (i = 1; i < kode.length; i++) {
-    //   if (kode[i] != null) {
-    //     kirim = kirim + kode[i] + ",";
-    //   }
-    // }
     kirim = kode + "#" + inken + "#" + obatObatan;
     $.messager.defaults.ok = "Ya";
     $.messager.defaults.cancel = "Tidak";

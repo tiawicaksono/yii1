@@ -96,30 +96,21 @@ $cs->registerScriptFile($assetsUrl . '/js/rekam.js', CClientScript::POS_END);
                         <div class="tab-content">
                             <div class="tab-pane active" id="tab_1">
                                 <table width="100%">
-                                    <tr>
-                                        <td width="20%">1. Batuk</td>
-                                        <td colspan="4" width="80%">
-                                            <label>
-                                                <input id="A1" type="checkbox" class="flat-red"> Iya
-                                            </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>2. Pilek</td>
-                                        <td colspan="4">
-                                            <label>
-                                                <input id="A2" type="checkbox" class="flat-red"> Iya
-                                            </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>3. Tekanan Darah Tinggi</td>
-                                        <td colspan="4"><input type="text" id="A3" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td>4. Tekanan Gula Darah</td>
-                                        <td colspan="4"><input type="text" id="A4" /></td>
-                                    </tr>
+                                    <?php
+                                    foreach ($listRekam as $key => $value) {
+                                        $pilihan = "checkbox";
+                                        if ($value->check_or_text == 2) $pilihan = "text";
+                                    ?>
+                                        <tr class="rowCheckOrText">
+                                            <td width="20%"><?php echo ++$key . ". " . strtoupper($value->name); ?></td>
+                                            <td colspan="4" width="80%">
+                                                <label>
+                                                    <input id="<?php echo strtoupper($value->kode); ?>" type="<?php echo $pilihan; ?>" class="flat-red <?php echo "class_" . $pilihan ?>">
+                                                    <?php if ($value->check_or_text != 2) echo "iya"; ?>
+                                                </label>
+                                            </td>
+                                        </tr>
+                                    <?php } ?>
                                 </table>
                             </div><!-- /.tab-pane -->
                             <div class="tab-pane" id="tab_2">
@@ -370,14 +361,14 @@ $cs->registerScriptFile($assetsUrl . '/js/rekam.js', CClientScript::POS_END);
                 },
                 {
                     field: 'nama_pasien',
-                    width: 120,
+                    width: 200,
                     title: 'NAMA PASIEN',
                     sortable: false
                 },
                 {
                     field: 'alamat_pasien',
                     title: 'ALAMAT PASIEN',
-                    width: 200,
+                    width: 300,
                     sortable: false
                 }
             ]

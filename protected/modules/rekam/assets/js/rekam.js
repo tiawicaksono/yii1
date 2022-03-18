@@ -35,10 +35,10 @@ function getInformationPasien() {
 
 function clickSubmit(urlAct) {
   var kode = new Array();
-  var kirim = "";
-  var aktifitas = "";
   var inken = new Array();
   var obatObatan = new Array();
+  var kirim = "";
+  var aktifitas = "";
   var id_rekam_medis = $("#id_rekam_medis").val();
   var id_dokter = $("#id_dokter").val();
   // alert($("#jnsbody").val());
@@ -50,9 +50,22 @@ function clickSubmit(urlAct) {
     if ($("#A2").is(":checked")) {
       kode[2] = "A2";
     }
+    $(".rowCheckOrText")
+      .find(".class_checkbox")
+      .each(function () {
+        if ($(this).checked) {
+          kode.push($(this).prop("id") + ",");
+        }
+      });
 
-    inken[1] = "A3" + "~" + $("#A3").val();
-    inken[2] = "A4" + "~" + $("#A4").val();
+    $(".rowCheckOrText")
+      .find(".class_text")
+      .each(function () {
+        inken.push($(this).prop("id") + "~" + $(this).val());
+      });
+
+    // inken[1] = "A3" + "~" + $("#A3").val();
+    // inken[2] = "A4" + "~" + $("#A4").val();
     //----------------------------------------------------
     // DATA OBAT
     $(".rowObat")
@@ -61,12 +74,12 @@ function clickSubmit(urlAct) {
         obatObatan.push($(this).prop("id") + "~" + $(this).val());
       });
     // String yang harus dikirim sebagai variabel inputan
-    for (i = 1; i < kode.length; i++) {
-      if (kode[i] != null) {
-        kirim = kirim + kode[i] + ",";
-      }
-    }
-    kirim = kirim + "#" + inken + "#" + obatObatan;
+    // for (i = 1; i < kode.length; i++) {
+    //   if (kode[i] != null) {
+    //     kirim = kirim + kode[i] + ",";
+    //   }
+    // }
+    kirim = kode + "#" + inken + "#" + obatObatan;
     $.messager.defaults.ok = "Ya";
     $.messager.defaults.cancel = "Tidak";
     $.messager.confirm(

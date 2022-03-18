@@ -20,7 +20,11 @@ class DefaultController extends Controller
         $criteria = new CDbCriteria();
         $criteria->addCondition("stok_obat > 0");
         $dataObat = VTransaksiKulak::model()->findAll($criteria);
-        $this->render('index', array("dataObat" => $dataObat));
+        $listRekam = MListRekam::model()->findAll();
+        $this->render('index', array(
+            "dataObat" => $dataObat,
+            "listRekam" => $listRekam
+        ));
     }
 
     public function actionListPendaftaran()
@@ -79,8 +83,80 @@ class DefaultController extends Controller
         $id_rekam_medis = $_POST['id_rekam_medis'];
         $id_dokter = $_POST['id_dokter'];
         $variabel = $_POST['variabel'];
-        $query = "select proses_rekam_medis('$variabel',$id_rekam_medis,'$id_dokter');";
-        Yii::app()->db->createCommand($query)->execute();
+        $dtTemp = explode('#', $variabel);
+        if (!empty($dtTemp[0])) {
+            $dtKodeRekamMedis = explode(',', $dtTemp[0]);
+            foreach ($dtKodeRekamMedis as $key => $value) {
+                if (!empty($value)) {
+                    // $sql = "insert into tbl_rekam_medis_detail (id_rekam_medis,kode_medis,keterangan) values ($id_rekam_medis,'$value',(select keterangan_medis from m_keterangan_medis WHERE kode_medis='$value'))";
+                    // Yii::app()->db->createCommand($sql)->execute();
+                    $tblRekamMedisDetail = new TblRekamMedisDetail();
+                    $tblRekamMedisDetail->id_rekam_medis = $id_rekam_medis;
+                    $tblRekamMedisDetail->kode_medis = $value;
+                    $tblRekamMedisDetail->keterangan = $this->DetailRekamMedis($value);
+                    $tblRekamMedisDetail->save();
+                }
+            }
+        }
+        if (!empty($dtTemp[1])) {
+            $dtKodeRekamMedis = explode(',', $dtTemp[1]);
+            foreach ($dtKodeRekamMedis as $key => $value) {
+                if (!empty($value)) {
+                    $nilaitl = explode('~', $value);
+                    if (!empty($nilaitl[1])) {
+                        if ($nilaitl[0] == 'A4') {
+                            if (intval($nilaitl[1]) > 180) {
+                                $nilaitl[0] = 'A4.1';
+                            }
+                            if (intval($nilaitl[1]) < 80) {
+                                $nilaitl[0] = 'A4.2';
+                            }
+                        }
+                        // $sql = "insert into tbl_rekam_medis_detail (id_rekam_medis,kode_medis,nilai,keterangan) values ($id_rekam_medis,'$nilaitl[0]','$nilaitl[1]',(select keterangan_medis from m_keterangan_medis WHERE kode_medis='$nilaitl[0]'))";
+                        // Yii::app()->db->createCommand($sql)->execute();
+                        $tblRekamMedisDetail = new TblRekamMedisDetail();
+                        $tblRekamMedisDetail->id_rekam_medis = $id_rekam_medis;
+                        $tblRekamMedisDetail->kode_medis = $nilaitl[0];
+                        $tblRekamMedisDetail->nilai = $nilaitl[1];
+                        $tblRekamMedisDetail->keterangan = $this->DetailRekamMedis($nilaitl[0]);
+                        $tblRekamMedisDetail->save();
+                    }
+                }
+            }
+        }
+        if (!empty($dtTemp[2])) {
+            $dtKodeRekamMedis = explode(',', $dtTemp[2]);
+            foreach ($dtKodeRekamMedis as $key => $value) {
+                if (!empty($value)) {
+                    $nilaitl = explode('~', $value);
+                    // echo "<br/>";
+                    // echo empty($nilaitl[1]) ? $nilaitl[1] . "88tidak-" : $nilaitl[1] . "88ada-";
+                    if (!empty($nilaitl[1]) && $nilaitl[1] != 0) {
+                        // $sql = "insert into tbl_resep_obat (id_rekam_medis,id_transaksi_kulak,jumlah_obat) values ($id_rekam_medis,$nilaitl[0],$nilaitl[1])";
+                        // Yii::app()->db->createCommand($sql)->execute();
+                        // echo $nilaitl[0] . "_" . $nilaitl[1];
+                        $tblObat = new TblResepObat();
+                        $tblObat->id_rekam_medis = $id_rekam_medis;
+                        $tblObat->id_transaksi_kulak = $nilaitl[0];
+                        $tblObat->jumlah_obat = $nilaitl[1];
+                        $tblObat->save();
+                    }
+                }
+            }
+            // $sql = "update tbl_rekam_medis set status_rekam_medis=true where id_rekam_medis=$id_rekam_medis";
+            // Yii::app()->db->createCommand($sql)->execute();
+            $sqlUpdateTbl = TblRekamMedis::model()->updateByPk($id_rekam_medis, array('status_rekam_medis' => true));
+        }
+    }
+
+    private function DetailRekamMedis($kode)
+    {
+        $return = "";
+        if (!empty($kode)) {
+            $modelKeterangan = MKeteranganMedis::model()->findByAttributes(array("kode_medis" => $kode));
+            if (!empty($modelKeterangan)) $return = $modelKeterangan->keterangan_medis;
+        }
+        return $return;
     }
 
     public function actionLoadImage()
